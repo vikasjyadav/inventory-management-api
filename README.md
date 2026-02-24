@@ -78,7 +78,7 @@ The project follows a layered structure:
 
 
 
-This structure keeps the code clean and maintainable.
+
 
 
 
@@ -90,7 +90,7 @@ This structure keeps the code clean and maintainable.
 
 
 
-Update your `application.properties` file:
+ `application.properties` file:
 
 
 
