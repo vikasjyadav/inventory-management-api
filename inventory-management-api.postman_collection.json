@@ -8,12 +8,12 @@
   },
   "item": [
     {
-      "name": "Get All Products",
+      "name": "Get All Products Sort by price ascending",
       "request": {
         "method": "GET",
         "header": [],
         "url": {
-          "raw": "http://localhost:8080/api/products",
+          "raw": "http://localhost:8080/api/products?sortBy=price&direction=asc",
           "protocol": "http",
           "host": [
             "localhost"
@@ -22,6 +22,16 @@
           "path": [
             "api",
             "products"
+          ],
+          "query": [
+            {
+              "key": "sortBy",
+              "value": "price"
+            },
+            {
+              "key": "direction",
+              "value": "asc"
+            }
           ]
         }
       },
@@ -34,7 +44,7 @@
         "header": [],
         "body": {
           "mode": "raw",
-          "raw": "{\r\n    \"name\": \"Shouse\",\r\n    \"price\":4000,\r\n    \"quantity\" : 50\r\n}",
+          "raw": "{\r\n    \"name\": \"\",\r\n    \"price\":4000,\r\n    \"quantity\" : 50\r\n}",
           "options": {
             "raw": {
               "language": "json"
@@ -172,6 +182,64 @@
               "key": "quantity",
               "value": "9"
             }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Get All Products Sort by price ascending",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:8080/api/products?sortBy=price&direction=desc",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "api",
+            "products"
+          ],
+          "query": [
+            {
+              "key": "sortBy",
+              "value": "price"
+            },
+            {
+              "key": "direction",
+              "value": "desc"
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Get All Products Sort by quantity descending:",
+      "request": {
+        "method": "GET",
+        "header": []
+      },
+      "response": []
+    },
+    {
+      "name": "Get All Products Soerted By ascending order of id",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:8080/api/products",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "api",
+            "products"
           ]
         }
       },

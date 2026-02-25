@@ -3,9 +3,9 @@ About This Project
 
 This is a simple Inventory Management REST API built using Spring Boot and MySQL.
 
-The purpose of this project was to practice backend development concepts in a structured way and apply clean architecture principles instead of building a basic CRUD application.
+The main goal of this project was to practice backend development in a structured way instead of building a basic CRUD application. I focused on applying clean architecture principles, proper layering, validation, and structured exception handling.
 
-Through this project, I focused on:
+Through this project, I worked on:
 
 Clean layered architecture
 
@@ -23,7 +23,7 @@ Configurable business logic
 
 Sorting support
 
-The application allows full CRUD operations on products and includes structured error handling with meaningful HTTP responses.
+The application supports full CRUD operations on products and includes additional features like low-stock filtering and dynamic sorting.
 
 Tech Stack Used
 
@@ -43,70 +43,73 @@ Postman (for API testing)
 
 Project Architecture
 
-The project follows a clean layered structure:
+The project follows a layered structure:
 
-Controller – Handles HTTP requests and responses
+Controller Layer – Handles HTTP requests and responses
 
-Service – Contains business logic
+Service Layer – Contains business logic
 
-Repository – Handles database operations
+Repository Layer – Handles database operations
 
-DTO – Separates request and response models
+DTO Layer – Separates request and response models
 
 Mapper – Converts between Entity and DTO
 
 Exception Layer – Centralized error handling using @ControllerAdvice
 
-This structure keeps responsibilities separate and makes the project easier to maintain and extend.
-
-
+This structure keeps responsibilities clearly separated and makes the project easier to maintain and extend.
 
 Key Design Decisions
+1. DTO Pattern
 
+I used ProductRequest and ProductResponse DTOs to avoid exposing the entity directly to the client.
+This makes the API safer and keeps flexibility if the entity structure changes later.
 
-1️. DTO Pattern
-
-I used ProductRequest and ProductResponse DTOs to avoid exposing the entity directly.
-This improves security and keeps the API flexible.
-
-2️. Global Exception Handling
+2. Global Exception Handling
 
 A centralized exception handler is implemented to:
 
-Handle resource not found errors
+Handle resource not found scenarios
 
-Handle validation errors
+Handle invalid input and validation errors
 
 Return structured JSON error responses
 
 Provide proper HTTP status codes
 
-3️. Configurable Business Logic
+This ensures consistent and readable API responses.
 
-The low-stock threshold is not hardcoded.
-It is configurable through:
+3. Configurable Low-Stock Threshold
+
+The low-stock threshold is not hardcoded inside the service layer.
+
+It is configurable using:
 
 inventory.low-stock-threshold
 
 inside application.properties.
 
-This makes the business rule flexible without changing the source code.
+This makes the business rule flexible without modifying source code.
 
-4️. Sorting Support
+4. Sorting Support
 
-The GET /api/products endpoint supports dynamic sorting using query parameters:
+The GET /api/products endpoint supports dynamic sorting using query parameters.
+
+Example:
 
 /api/products?sortBy=price&direction=desc
 
 Sorting is implemented using Spring Data JPA Sort.
 
-5️. Auditing Fields
+5. Auditing Fields
 
-createdAt is automatically set using @PrePersist
+The entity includes:
 
-updatedAt is automatically updated using @PreUpdate
+createdAt – Automatically set using @PrePersist
 
-This ensures proper tracking of product lifecycle events.
+updatedAt – Automatically updated using @PreUpdate
+
+This ensures proper tracking of product creation and updates.
 
 API Endpoints
 Method	Endpoint	Description
@@ -119,7 +122,7 @@ DELETE	/api/products/{id}	Delete product
 GET	/api/products/low-stock	Get low stock products
 Database Configuration
 
-Configure database in application.properties:
+Configure your database in application.properties:
 
 spring.datasource.url=jdbc:mysql://localhost:3306/inventory_db
 spring.datasource.username=root
@@ -133,7 +136,7 @@ spring.sql.init.mode=never
 spring.jpa.defer-datasource-initialization=true
 
 inventory.low-stock-threshold=10
-How to Run
+How to Run the Project
 
 Create MySQL database:
 
@@ -157,4 +160,8 @@ Add authentication & authorization
 
 Add unit testing
 
-This project helped me strengthen my understanding of Spring Boot backend development and build a more structured API instead of a simple CRUD application.
+Dockerize the application
+
+Project Status
+
+This project was built as part of backend development practice to strengthen understanding of Spring Boot, JPA, and clean API design principles.
