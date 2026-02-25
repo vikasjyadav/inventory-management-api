@@ -59,13 +59,17 @@ Exception Layer – Centralized error handling using @ControllerAdvice
 
 This structure keeps responsibilities separate and makes the project easier to maintain and extend.
 
+
+
 Key Design Decisions
-1️⃣ DTO Pattern
+
+
+1️. DTO Pattern
 
 I used ProductRequest and ProductResponse DTOs to avoid exposing the entity directly.
 This improves security and keeps the API flexible.
 
-2️⃣ Global Exception Handling
+2️. Global Exception Handling
 
 A centralized exception handler is implemented to:
 
@@ -77,7 +81,7 @@ Return structured JSON error responses
 
 Provide proper HTTP status codes
 
-3️⃣ Configurable Business Logic
+3️. Configurable Business Logic
 
 The low-stock threshold is not hardcoded.
 It is configurable through:
@@ -88,7 +92,7 @@ inside application.properties.
 
 This makes the business rule flexible without changing the source code.
 
-4️⃣ Sorting Support
+4️. Sorting Support
 
 The GET /api/products endpoint supports dynamic sorting using query parameters:
 
@@ -96,7 +100,7 @@ The GET /api/products endpoint supports dynamic sorting using query parameters:
 
 Sorting is implemented using Spring Data JPA Sort.
 
-5️⃣ Auditing Fields
+5️. Auditing Fields
 
 createdAt is automatically set using @PrePersist
 
