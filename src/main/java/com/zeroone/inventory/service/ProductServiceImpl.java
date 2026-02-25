@@ -1,18 +1,24 @@
 package com.zeroone.inventory.service;
 import com.zeroone.inventory.entity.Product;
+import com.zeroone.inventory.exception.ResourceNotFoundException;
 import com.zeroone.inventory.mapper.*;
 import com.zeroone.inventory.dto.ProductRequest;
 import com.zeroone.inventory.dto.ProductResponse;
 import com.zeroone.inventory.mapper.ProductMapper;
 import com.zeroone.inventory.repository.ProductRepository;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+
 @Service
 public class ProductServiceImpl implements ProductService{
+    @Value("${inventory.low-stock-threshold}")
+    private int lowStockThreshold;
 
 
     private final ProductRepository productRepository;
@@ -27,14 +33,19 @@ public class ProductServiceImpl implements ProductService{
     }
 
     @Override
-    public List<ProductResponse> getAllProducts() {
-        List<Product> all = productRepository.findAll();
-        List<ProductResponse> responseList = new ArrayList<>();
-        for (Product product : all) {
-            responseList.add(ProductMapper.toResponse(product));
+    public List<ProductResponse> getAllProducts(String sortBy, String direction) {
+
+        Sort sort = Sort.by(sortBy);
+
+        if ("desc".equalsIgnoreCase(direction)) {
+            sort = sort.descending();
+        } else {
+            sort = sort.ascending();
         }
 
-        return responseList ;
+        List<Product> products = productRepository.findAll(sort);
+
+        return ProductMapper.toResponseList(products);
     }
 
     @Override
@@ -45,7 +56,7 @@ public class ProductServiceImpl implements ProductService{
 
             return ProductMapper.toResponse(product);
         }else {
-            throw new RuntimeException("Product not found with id:"+id);
+            throw new ResourceNotFoundException("Product not found with id:"+id);
         }
     }
 
@@ -59,7 +70,7 @@ public class ProductServiceImpl implements ProductService{
 
             return ProductMapper.toResponse(existedProduct);
         }
-        throw new RuntimeException("Product Not Found With Id : "+id);
+        throw new ResourceNotFoundException("Product Not Found With Id : "+id);
     }
 
     @Override
@@ -69,27 +80,26 @@ public class ProductServiceImpl implements ProductService{
             Product product = byId.get();
             productRepository.delete(product);
         }else {
-            throw new RuntimeException("Product No Exist With Id :"+id);
+            throw new ResourceNotFoundException("Product No Exist With Id :"+id);
         }
 
     }
-
     @Override
     public List<ProductResponse> getLowStockProducts() {
-         final int LOW_STOCK_THRESHOLD = 10;
-        List<Product> byQuantityLessThan = productRepository.findByQuantityLessThan(LOW_STOCK_THRESHOLD);
+        List<Product> products =
+                productRepository.findByQuantityLessThan(lowStockThreshold);
 
-        return  ProductMapper.toResponseList(byQuantityLessThan);
+        return ProductMapper.toResponseList(products);
     }
 
     @Override
     public ProductResponse updateQuantity(Long id, Integer quantity) {
         if (quantity == null || quantity < 0){
-            throw new RuntimeException("Quantity must be zero or positive");
+            throw new IllegalArgumentException("Quantity must be zero or positive");
         }
         Product existedProduct = productRepository.findById(id)
                 .orElseThrow(() ->
-                        new RuntimeException("Product not found with id: " + id)
+                        new ResourceNotFoundException("Product not found with id: " + id)
                 );
 
         existedProduct.setQuantity(quantity);
