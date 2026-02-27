@@ -1,128 +1,177 @@
-Inventory Management API
-About This Project
+👑 FINAL UPGRADED README (Submission Ready)
 
-This is a simple Inventory Management REST API built using Spring Boot and MySQL.
+Replace your entire README with this:
 
-The main goal of this project was to practice backend development in a structured way instead of building a basic CRUD application. I focused on applying clean architecture principles, proper layering, validation, and structured exception handling.
+📦 ERP Inventory Management System (Secure Production Version)
 
-Through this project, I worked on:
+A production-ready Inventory Management REST API built using Spring Boot, MySQL, and Spring Security with JWT-based authentication and role-based authorization.
 
-Clean layered architecture
+This project was developed as part of the ZeroOne Tech Labs Java Internship task and enhanced with real-world production features.
 
-Proper use of DTOs
+🚀 Tech Stack
 
-RESTful API design
-
-Global exception handling
-
-Input validation
-
-Database integration using JPA
-
-Configurable business logic
-
-Sorting support
-
-The application supports full CRUD operations on products and includes additional features like low-stock filtering and dynamic sorting.
-
-Tech Stack Used
-
-Java 25
+Java 17+ (or your exact version)
 
 Spring Boot
 
-Spring Data JPA
+Spring Security
 
-Hibernate
+JWT Authentication
+
+Spring Data JPA / Hibernate
 
 MySQL
 
+Swagger (OpenAPI)
+
+SLF4J / Logback
+
+JUnit & Mockito
+
 Maven
 
-Postman (for API testing)
+🔐 Security Implementation
+Authentication
 
-Project Architecture
+Login API generates JWT token
 
-The project follows a layered structure:
+Passwords encrypted using BCrypt
 
-Controller Layer – Handles HTTP requests and responses
+Stateless session management
 
-Service Layer – Contains business logic
+JWT validated via custom filter
 
-Repository Layer – Handles database operations
+To access secured APIs:
 
-DTO Layer – Separates request and response models
+Authorization Header:
 
-Mapper – Converts between Entity and DTO
+Bearer <your-jwt-token>
+👥 Role-Based Authorization
 
-Exception Layer – Centralized error handling using @ControllerAdvice
+Roles implemented:
 
-This structure keeps responsibilities clearly separated and makes the project easier to maintain and extend.
+ADMIN
 
-Key Design Decisions
-1. DTO Pattern
+MANAGER
 
-I used ProductRequest and ProductResponse DTOs to avoid exposing the entity directly to the client.
-This makes the API safer and keeps flexibility if the entity structure changes later.
+STAFF
 
-2. Global Exception Handling
+Access Control Matrix
+Endpoint	ADMIN	MANAGER	STAFF
+GET /api/products	✅	✅	✅
+POST /api/products	✅	✅	❌
+PATCH /api/products/{id}/quantity	✅	✅	❌
+DELETE /api/products/{id}	✅	❌	❌
 
-A centralized exception handler is implemented to:
+Only ADMIN can delete products.
 
-Handle resource not found scenarios
+📑 Core Features
+1️⃣ Clean Layered Architecture
 
-Handle invalid input and validation errors
+Controller Layer
 
-Return structured JSON error responses
+Service Layer
 
-Provide proper HTTP status codes
+Repository Layer
 
-This ensures consistent and readable API responses.
+DTO Layer
 
-3. Configurable Low-Stock Threshold
+Mapper Layer
 
-The low-stock threshold is not hardcoded inside the service layer.
+Global Exception Handler
 
-It is configurable using:
+2️⃣ JWT Authentication Flow
 
-inventory.low-stock-threshold
+User logs in via /auth/login
 
-inside application.properties.
+Server returns JWT token
 
-This makes the business rule flexible without modifying source code.
+Client sends token in Authorization header
 
-4. Sorting Support
+JWT filter validates token on every request
 
-The GET /api/products endpoint supports dynamic sorting using query parameters.
+Access granted based on role
 
-Example:
+3️⃣ Pagination Support
+GET /api/products?page=0&size=5
+4️⃣ Dynamic Sorting
+GET /api/products?sort=name,asc
+GET /api/products?sort=price,desc
 
-/api/products?sortBy=price&direction=desc
+Supported sorting fields:
 
-Sorting is implemented using Spring Data JPA Sort.
+name
 
-5. Auditing Fields
+price
 
-The entity includes:
+quantity
 
-createdAt – Automatically set using @PrePersist
+createdAt
 
-updatedAt – Automatically updated using @PreUpdate
+5️⃣ Audit Fields
 
-This ensures proper tracking of product creation and updates.
+Entity automatically maintains:
 
-API Endpoints
+createdAt
+
+updatedAt
+
+createdBy
+
+updatedBy
+
+6️⃣ Structured Exception Handling
+
+Custom error response structure:
+
+{
+"timestamp": "",
+"status": 404,
+"message": "Product not found",
+"path": "/api/products/100"
+}
+7️⃣ Swagger Documentation
+
+Access Swagger UI:
+
+http://localhost:8080/swagger-ui/index.html
+8️⃣ Logging
+
+Application logging implemented using SLF4J and Logback.
+
+Logs include:
+
+API access logs
+
+Error logs
+
+Business operation logs
+
+9️⃣ Unit Testing
+
+Basic service-layer unit tests implemented using:
+
+JUnit
+
+Mockito
+
+📌 API Endpoints
+🔑 Auth APIs
 Method	Endpoint	Description
-POST	/api/products	Create a new product
-GET	/api/products	Get all products (with optional sorting)
+POST	/auth/register	Register new user
+POST	/auth/login	Login & generate JWT
+📦 Product APIs
+Method	Endpoint	Description
+GET	/api/products	Get products (pagination & sorting supported)
 GET	/api/products/{id}	Get product by ID
+POST	/api/products	Create product
 PUT	/api/products/{id}	Update product
-PATCH	/api/products/{id}/quantity	Update product quantity
+PATCH	/api/products/{id}/quantity	Update quantity
 DELETE	/api/products/{id}	Delete product
 GET	/api/products/low-stock	Get low stock products
-Database Configuration
+🗄️ Database Configuration
 
-Configure your database in application.properties:
+Update application.properties:
 
 spring.datasource.url=jdbc:mysql://localhost:3306/inventory_db
 spring.datasource.username=root
@@ -131,37 +180,36 @@ spring.datasource.password=yourpassword
 spring.jpa.hibernate.ddl-auto=update
 spring.jpa.show-sql=true
 spring.jpa.properties.hibernate.format_sql=true
+▶️ How To Run
 
-spring.sql.init.mode=never
-spring.jpa.defer-datasource-initialization=true
-
-inventory.low-stock-threshold=10
-How to Run the Project
-
-Create MySQL database:
+Create database:
 
 CREATE DATABASE inventory_db;
 
-Update database credentials in application.properties.
+Update DB credentials
 
-Run the application:
+Run:
 
+mvn clean install
 mvn spring-boot:run
+🧪 Postman Testing
 
-Test APIs using Postman.
+Call /auth/login
 
-Future Improvements
+Copy JWT token
 
-Add pagination support
+Add Bearer Token in Postman
 
-Add Swagger documentation
+Test secured APIs
 
-Add authentication & authorization
+Postman collection included in repository.
 
-Add unit testing
+🏁 Project Status
 
-Dockerize the application
-
-Project Status
-
-This project was built as part of backend development practice to strengthen understanding of Spring Boot, JPA, and clean API design principles.
+✔ Fully secured using JWT
+✔ Role-based authorization
+✔ Pagination & Sorting
+✔ Swagger Documentation
+✔ Logging implemented
+✔ Unit testing added
+✔ Production-ready structure

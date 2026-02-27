@@ -2,9 +2,14 @@ package com.zeroone.inventory.controller;
 
 import com.zeroone.inventory.dto.ProductRequest;
 import com.zeroone.inventory.dto.ProductResponse;
+import com.zeroone.inventory.mapper.ProductMapper;
 import com.zeroone.inventory.service.ProductService;
 import jakarta.validation.Valid;
 import lombok.Getter;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -14,10 +19,14 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/products")
 public class ProductController {
+
+    private final ProductMapper productMapper;
+
     private final ProductService productService;
 
 
-    public ProductController(ProductService productService) {
+    public ProductController(ProductMapper productMapper, ProductService productService) {
+        this.productMapper = productMapper;
         this.productService = productService;
     }
 
@@ -28,14 +37,20 @@ public class ProductController {
     }
 
     @GetMapping
-    public ResponseEntity<List<ProductResponse>> getAllProduct(
-            @RequestParam(defaultValue = "id") String sortBy,
+    public Page<ProductResponse> getAllProducts(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "5") int size,
+            @RequestParam(defaultValue = "createdAt") String sortBy,
             @RequestParam(defaultValue = "asc") String direction) {
 
-        List<ProductResponse> products =
-                productService.getAllProducts(sortBy, direction);
+        Sort sort = direction.equalsIgnoreCase("desc")
+                ? Sort.by(sortBy).descending()
+                : Sort.by(sortBy).ascending();
 
-        return new ResponseEntity<>(products, HttpStatus.OK);
+        Pageable pageable = PageRequest.of(page, size, sort);
+
+        return productService.getAllProducts(pageable)
+                .map(productMapper::toResponse);
     }
 
     @GetMapping("/{id}")

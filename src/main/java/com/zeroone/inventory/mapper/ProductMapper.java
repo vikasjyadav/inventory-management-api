@@ -3,38 +3,46 @@ package com.zeroone.inventory.mapper;
 import com.zeroone.inventory.dto.ProductRequest;
 import com.zeroone.inventory.dto.ProductResponse;
 import com.zeroone.inventory.entity.Product;
+import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Component
 public class ProductMapper {
 
-    public static Product toEntity(ProductRequest request){
-        if(request == null){
+    public Product toEntity(ProductRequest request) {
+
+        if (request == null) {
             return null;
         }
-        Product product = new Product();
-        product.setName(request.getName());
-        product.setPrice(request.getPrice());
-        product.setQuantity(request.getQuantity());
 
-        return product;
+        return Product.builder()
+                .name(request.getName())
+                .price(request.getPrice())
+                .quantity(request.getQuantity())
+                .build();
     }
 
-    public static ProductResponse toResponse(Product product){
-        if (product == null){
+    public ProductResponse toResponse(Product product) {
+
+        if (product == null) {
             return null;
         }
-        ProductResponse productResponse = new ProductResponse();
-        productResponse.setId(product.getId());
-        productResponse.setName(product.getName());
-        productResponse.setPrice(product.getPrice());
-        productResponse.setQuantity(product.getQuantity());
-        productResponse.setCreatedAt(product.getCreatedAt());
 
-        return productResponse;
+        return ProductResponse.builder()
+                .id(product.getId())
+                .name(product.getName())
+                .price(product.getPrice())
+                .quantity(product.getQuantity())
+                .createdAt(product.getCreatedAt())
+                .updatedAt(product.getUpdatedAt())
+                .createdBy(product.getCreatedBy())
+                .updatedBy(product.getUpdatedBy())
+                .build();
     }
-    public static void updateEntity(Product product, ProductRequest request) {
+
+    public void updateEntity(Product product, ProductRequest request) {
 
         if (product == null || request == null) {
             return;
@@ -45,13 +53,14 @@ public class ProductMapper {
         product.setQuantity(request.getQuantity());
     }
 
-    public static List<ProductResponse> toResponseList(List<Product> products) {
+    public List<ProductResponse> toResponseList(List<Product> products) {
 
         if (products == null) {
-            return null;
+            return List.of();
         }
+
         return products.stream()
-                .map(ProductMapper::toResponse)
+                .map(this::toResponse)
                 .collect(Collectors.toList());
     }
 }
