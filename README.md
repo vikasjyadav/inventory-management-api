@@ -1,16 +1,12 @@
-👑 FINAL UPGRADED README (Submission Ready)
+📦 ERP Inventory Management System (Order Management & Stock Flow)
 
-Replace your entire README with this:
+A production-ready Inventory Management REST API built using Spring Boot, MySQL, and Spring Security (JWT).
 
-📦 ERP Inventory Management System (Secure Production Version)
-
-A production-ready Inventory Management REST API built using Spring Boot, MySQL, and Spring Security with JWT-based authentication and role-based authorization.
-
-This project was developed as part of the ZeroOne Tech Labs Java Internship task and enhanced with real-world production features.
+This project was developed as part of the ZeroOne Tech Labs Java Internship Task and implements a real-world ERP order management module where product stock automatically updates based on order transactions.
 
 🚀 Tech Stack
 
-Java 17+ (or your exact version)
+Java 17+
 
 Spring Boot
 
@@ -37,62 +33,78 @@ Login API generates JWT token
 
 Passwords encrypted using BCrypt
 
-Stateless session management
+Stateless authentication
 
-JWT validated via custom filter
+Custom JWT Authentication Filter
 
 To access secured APIs:
 
-Authorization Header:
-
-Bearer <your-jwt-token>
+Authorization: Bearer <your-jwt-token>
 👥 Role-Based Authorization
 
 Roles implemented:
 
 ADMIN
-
 MANAGER
-
 STAFF
-
 Access Control Matrix
-Endpoint	ADMIN	MANAGER	STAFF
-GET /api/products	✅	✅	✅
-POST /api/products	✅	✅	❌
-PATCH /api/products/{id}/quantity	✅	✅	❌
-DELETE /api/products/{id}	✅	❌	❌
-
-Only ADMIN can delete products.
-
+Endpoint	                        ADMIN	MANAGER	STAFF
+GET /api/products                   ✅	      ✅	  ✅
+POST /api/products	                ✅    	  ✅	  ❌
+PATCH /api/products/{id}/quantity	✅	      ✅	  ❌
+DELETE /api/products/{id}	        ✅	      ❌	  ❌
+POST /orders	                    ❌	      ✅	  ✅
+GET /orders	                        ❌        ✅      ✅
+PUT /orders/{id}/status	            ❌	      ✅	  ❌
+GET /reports/sales              	✅	      ❌	  ❌
+GET /reports/low-stock/{quantity}	✅	      ✅	  ❌
 📑 Core Features
 1️⃣ Clean Layered Architecture
 
+The project follows a clean layered architecture:
+
 Controller Layer
-
 Service Layer
-
 Repository Layer
-
 DTO Layer
-
 Mapper Layer
-
 Global Exception Handler
+2️⃣ Order Management & Stock Flow
 
-2️⃣ JWT Authentication Flow
+The system simulates real ERP order transactions.
 
-User logs in via /auth/login
+Order Creation Flow
 
-Server returns JWT token
+Client sends order request with product IDs and quantities.
 
-Client sends token in Authorization header
+System verifies product availability.
 
-JWT filter validates token on every request
+If stock is sufficient:
 
-Access granted based on role
+Order is created.
+
+Product stock is automatically reduced.
+
+Total order amount is calculated dynamically.
+
+Order Cancellation Flow
+
+When an order status is changed to CANCELLED:
+
+System fetches order items.
+
+Product quantities are restored back to inventory.
+
+Order status is updated.
+
+This ensures accurate stock management.
 
 3️⃣ Pagination Support
+
+Products API supports pagination.
+
+Example:
+
 GET /api/products?page=0&size=5
 4️⃣ Dynamic Sorting
 GET /api/products?sort=name,asc
@@ -101,47 +113,42 @@ GET /api/products?sort=price,desc
 Supported sorting fields:
 
 name
-
 price
-
 quantity
-
 createdAt
-
 5️⃣ Audit Fields
 
-Entity automatically maintains:
+Entities automatically maintain audit fields:
 
 createdAt
-
 updatedAt
-
 createdBy
-
 updatedBy
-
 6️⃣ Structured Exception Handling
 
 Custom error response structure:
 
 {
-"timestamp": "",
+"timestamp": "2026-03-05T10:00:00",
 "status": 404,
 "message": "Product not found",
 "path": "/api/products/100"
 }
-7️⃣ Swagger Documentation
+7️⃣ Swagger API Documentation
 
-Access Swagger UI:
+Swagger UI available at:
 
 http://localhost:8080/swagger-ui/index.html
+
+This provides interactive API documentation.
+
 8️⃣ Logging
 
 Application logging implemented using SLF4J and Logback.
 
 Logs include:
 
-API access logs
+API request logs
 
 Error logs
 
@@ -149,26 +156,44 @@ Business operation logs
 
 9️⃣ Unit Testing
 
-Basic service-layer unit tests implemented using:
+Service layer tests implemented using:
 
-JUnit
-
+JUnit 5
 Mockito
 
+Tests verify:
+
+Order creation
+
+Insufficient stock handling
+
+Order status updates
+
+Sales summary logic
+
 📌 API Endpoints
-🔑 Auth APIs
+🔑 Authentication APIs
 Method	Endpoint	Description
-POST	/auth/register	Register new user
-POST	/auth/login	Login & generate JWT
+POST	/api/auth/register	Register new user
+POST	/api/auth/login	Login and generate JWT
 📦 Product APIs
 Method	Endpoint	Description
-GET	/api/products	Get products (pagination & sorting supported)
+GET	/api/products	Get products (pagination supported)
 GET	/api/products/{id}	Get product by ID
 POST	/api/products	Create product
 PUT	/api/products/{id}	Update product
-PATCH	/api/products/{id}/quantity	Update quantity
+PATCH	/api/products/{id}/quantity	Update product quantity
 DELETE	/api/products/{id}	Delete product
-GET	/api/products/low-stock	Get low stock products
+📦 Order APIs
+Method	Endpoint	Description
+POST	/orders	Create new order
+GET	/orders	Fetch all orders
+GET	/orders/{id}	Get order details
+PUT	/orders/{id}/status	Update order status
+📊 Report APIs
+Method	Endpoint	Description
+GET	/reports/sales	Get sales summary
+GET	/reports/low-stock/{quantity}	Get low stock products
 🗄️ Database Configuration
 
 Update application.properties:
@@ -181,35 +206,59 @@ spring.jpa.hibernate.ddl-auto=update
 spring.jpa.show-sql=true
 spring.jpa.properties.hibernate.format_sql=true
 ▶️ How To Run
-
-Create database:
-
+1️⃣ Create Database
 CREATE DATABASE inventory_db;
+2️⃣ Update Database Credentials
 
-Update DB credentials
+Modify application.properties.
 
-Run:
-
+3️⃣ Run Application
 mvn clean install
 mvn spring-boot:run
 🧪 Postman Testing
 
-Call /auth/login
+1️⃣ Login using:
 
-Copy JWT token
+POST /api/auth/login
 
-Add Bearer Token in Postman
+2️⃣ Copy returned JWT token.
 
-Test secured APIs
+3️⃣ Add token to Postman header:
 
-Postman collection included in repository.
+Authorization: Bearer <token>
+
+4️⃣ Test secured APIs.
+
+A Postman collection is included in the repository.
+
+🎥 Demonstration
+
+The demo video shows:
+
+Login with JWT authentication
+
+Product retrieval
+
+Order creation
+
+Automatic stock deduction
+
+Order cancellation
+
+Stock restoration
+
+Sales report generation
+
+Low stock report
 
 🏁 Project Status
 
-✔ Fully secured using JWT
+✔ Order Management System implemented
+✔ Automatic stock deduction
+✔ Stock restoration on cancellation
+✔ Sales reporting module
+✔ JWT security implemented
 ✔ Role-based authorization
-✔ Pagination & Sorting
-✔ Swagger Documentation
-✔ Logging implemented
-✔ Unit testing added
-✔ Production-ready structure
+✔ Swagger documentation
+✔ Unit testing included
+✔ Production-ready architecture

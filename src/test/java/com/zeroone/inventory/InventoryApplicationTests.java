@@ -6,15 +6,18 @@ import com.zeroone.inventory.exception.ResourceNotFoundException;
 import com.zeroone.inventory.mapper.ProductMapper;
 import com.zeroone.inventory.repository.ProductRepository;
 
+import com.zeroone.inventory.service.ProductServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
 import java.util.List;
@@ -29,10 +32,8 @@ class ProductServiceImplTest {
     @Mock
     private ProductRepository productRepository;
 
-    @Mock
-    private ProductMapper productMapper;
 
-    @InjectMocks
+
     private ProductServiceImpl productService;
 
     private Product product;
@@ -40,6 +41,9 @@ class ProductServiceImplTest {
 
     @BeforeEach
     void setUp() {
+
+        ProductMapper productMapper = new ProductMapper();
+        productService = new ProductServiceImpl(productMapper, productRepository);
         product = new Product();
         product.setId(1L);
         product.setName("Test Product");
@@ -95,9 +99,11 @@ class ProductServiceImplTest {
     @Test
     void getAllProducts_success() {
 
+        Pageable pageable = PageRequest.of(0, 10);
+
         when(productRepository.findAll(any(Pageable.class)))
                 .thenReturn(new PageImpl<>(List.of(product)));
 
-        assertNotNull(productService.getAllProducts(Pageable.unpaged()));
+        assertNotNull(productService.getAllProducts(pageable));
     }
 }

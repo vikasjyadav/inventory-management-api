@@ -27,7 +27,8 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
 
                 .authorizeHttpRequests(auth -> auth
-                        // 🔓 Public endpoints
+
+                        // Public endpoints
                         .requestMatchers("/api/auth/login").permitAll()
                         .requestMatchers("/api/auth/register").permitAll()
                         .requestMatchers("/error").permitAll()
@@ -38,21 +39,40 @@ public class SecurityConfig {
                                 "/swagger-ui.html"
                         ).permitAll()
 
-                        // 👑 ADMIN only
-                        .requestMatchers("/api/users/create-manager")
+                        // Orders
+                        .requestMatchers(HttpMethod.POST, "/orders")
+                        .hasAnyRole("STAFF", "MANAGER")
+
+                        .requestMatchers(HttpMethod.GET, "/orders/**")
+                        .hasAnyRole("STAFF", "MANAGER" , "ADMIN")
+
+                        .requestMatchers(HttpMethod.PUT, "/orders/**")
+                        .hasRole("MANAGER")
+
+                        // Reports
+                        .requestMatchers(HttpMethod.GET, "/reports/sales")
                         .hasRole("ADMIN")
 
+                        .requestMatchers(HttpMethod.GET, "/reports/low-stock/**")
+                        .hasAnyRole("ADMIN", "MANAGER")
+
+                        // Product APIs
                         .requestMatchers(HttpMethod.DELETE, "/api/products/**")
                         .hasRole("ADMIN")
 
-                        // 👑 ADMIN + MANAGER
                         .requestMatchers(HttpMethod.POST, "/api/products")
                         .hasAnyRole("ADMIN", "MANAGER")
 
                         .requestMatchers(HttpMethod.PATCH, "/api/products/**")
                         .hasAnyRole("ADMIN", "MANAGER")
 
-                        // 🔐 All other endpoints require authentication
+                        .requestMatchers(HttpMethod.PUT, "/api/products/**")
+                        .hasAnyRole("ADMIN", "MANAGER")
+
+                        .requestMatchers( "/api/users/**")
+                        .hasRole("ADMIN")
+
+                        // Remaining endpoints
                         .anyRequest().authenticated()
                 )
 
