@@ -72,6 +72,18 @@ public class SecurityConfig {
                         .requestMatchers( "/api/users/**")
                         .hasRole("ADMIN")
 
+                        .requestMatchers("/vendors/**")
+                        .hasAnyRole("ADMIN", "MANAGER")
+
+                        .requestMatchers("/purchases/**")
+                        .hasAnyRole("STAFF", "MANAGER", "ADMIN")
+
+                        .requestMatchers("/invoices/**")
+                        .hasAnyRole("STAFF", "MANAGER", "ADMIN")
+
+                        .requestMatchers("/dashboard/**")
+                        .hasRole("ADMIN")
+
                         // Remaining endpoints
                         .anyRequest().authenticated()
                 )
